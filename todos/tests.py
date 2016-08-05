@@ -5,4 +5,4 @@ class AnimalTestCase(TestCase):
         self.perro = True
 
     def test_basic_boolean_assert(self):
-        self.assertEqual(self.perro, False)
+        self.assertEqual(self.perro, True)

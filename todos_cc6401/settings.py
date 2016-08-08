@@ -1,5 +1,5 @@
 """
-Django settings for todos project on Heroku. Fore more info, see:
+Django settings for todos_cc6401 project on Heroku. Fore more info, see:
 https://github.com/heroku/heroku-django-template
 
 For more information on this file, see
@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'todos.urls'
+ROOT_URLCONF = 'todos_cc6401.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'todos.wsgi.application'
+WSGI_APPLICATION = 'todos_cc6401.wsgi.application'
 
 
 # Database

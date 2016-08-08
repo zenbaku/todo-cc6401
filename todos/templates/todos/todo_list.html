@@ -1,0 +1,6 @@
+<h1>Tareas</h1>
+<ul>
+    {% for todo in object_list %}
+        <li>{{ todo.description }}</li>
+    {% endfor %}
+</ul>

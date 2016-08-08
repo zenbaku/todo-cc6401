@@ -1,10 +1,9 @@
 from django.http import HttpResponse
 from django.db import connection
+from django.views.generic import ListView
+
+from .models import Todo
 
 
-def home(request):
-    cursor = connection.cursor()
-    cursor.execute('SELECT 1')
-    row = cursor.fetchone()
-    print(row)
-    return HttpResponse("Hello, world! Result: %s" % row)
+class TodoList(ListView):
+    model = Todo

@@ -1,5 +1,5 @@
 """
-WSGI config for todos project.
+WSGI config for todos_cc6401 project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "todos.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "todos_cc6401.settings")
 
 application = get_wsgi_application()

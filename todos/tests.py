@@ -30,3 +30,27 @@ class ViewListTestCase(TransactionTestCase):
     def test(self):
         response = self.c.get('/')
         self.assertIn(self.description, response.content)
+
+
+class CompleteTaskTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        self.todo = Todo.objects.create(
+            description='Hello',
+            is_completed=False
+        )
+
+    def test_complete_button_present(self):
+        response = self.c.get('/')
+        self.assertIn('completar', response.content)
+
+    def test_complete_task(self):
+        todo_id = self.todo.id
+
+        response = self.c.post('/complete/', {
+            'id': todo_id
+        })
+
+        todo = Todo.objects.get(pk=todo_id)
+        self.assertTrue(todo.is_completed)
+        self.assertNotIn('completar', response.content)

@@ -1,6 +1,17 @@
 <h1>Tareas</h1>
 <ul>
     {% for todo in object_list %}
-        <li>{{ todo.description }}</li>
+        <li>
+            {{ todo.description }}
+            {% if todo.is_completed %}
+                &#10003;
+            {% else %}
+                <form action="{% url 'complete_task' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{ todo.id }}">
+                    <button>completar</button>
+                </form>
+            {% endif %}
+        </li>
     {% endfor %}
 </ul>

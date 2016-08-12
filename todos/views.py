@@ -15,7 +15,7 @@ class AddTaskView(TemplateView):
         context = super(AddTaskView, self).get_context_data(**kwargs)
         context['form'] = TodoForm()
         return context
-        
+
     def post(self, request, *args, **kwargs):
         form = TodoForm(request.POST)
         if form.is_valid():
@@ -26,7 +26,7 @@ class AddTaskView(TemplateView):
             return HttpResponseRedirect('/')
         else:
             messages.error(request, 'Invalid Form, try again.')
-            
+
 class EditTaskView(DetailView):
     model = Todo
     template_name = 'todos/edit_task.html'
@@ -36,7 +36,7 @@ class EditTaskView(DetailView):
         context = super(EditTaskView, self).get_context_data(**kwargs)
         context = self.update_context(context, TodoForm)
         return context
-        
+
     def post(self, request, *args, **kwargs):
         return self.update_post(request, TodoForm)
 
@@ -54,7 +54,7 @@ class EditTaskView(DetailView):
             return HttpResponseRedirect('/')
         else:
             messages.error(request, 'Invalid Form, try again.')
-            
+
 class TodoList(ListView):
     model = Todo
 
@@ -71,8 +71,8 @@ def complete_task(request):
 
 def reorder_task(request):
     """Mark a task as completed."""
-    todo_id = request.POST.get('id')
-    new_index = request.POST.get('new_index')
+    todo_id = int(request.POST.get('id'))
+    new_index = int(request.POST.get('new_index'))
 
     todo = Todo.objects.get(pk=todo_id)
     todo.to(new_index)

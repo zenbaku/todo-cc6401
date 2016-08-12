@@ -19,6 +19,9 @@ from todos import views
 
 urlpatterns = [
     url(r'^$', views.TodoList.as_view(), name='TodoList'),
+    url(
+        r'^uncompleted/$',
+        views.UncompletedTodoList.as_view(), name='uncompleted_tasks'),
     url(r'^complete/$', views.complete_task, name='complete_task'),
     url(r'^reorder/$', views.reorder_task, name='reorder_task'),
     url(r'^add_task/$', views.AddTaskView.as_view(), name='add_task'),

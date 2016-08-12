@@ -175,3 +175,21 @@ class TestOrderTaskViewTestCase(TransactionTestCase):
             Todo.objects.values_list('pk', 'order'),
             [(second.pk, 0), (third.pk, 1), (first.pk, 2)]
         )
+
+
+class FilterCompletedTaskTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        Todo.objects.create(
+            description='biggest todo',
+            is_completed=False
+        )
+        Todo.objects.create(
+            description='largest todo',
+            is_completed=True
+        )
+
+    def test(self):
+        response = self.c.get('/uncompleted/')
+        self.assertIn('biggest todo', response.content)
+        self.assertNotIn('largest todo', response.content)

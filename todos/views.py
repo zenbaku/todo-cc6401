@@ -1,12 +1,25 @@
 from django.shortcuts import redirect
 from django.views.generic import ListView
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
 from .models import Todo
+from .forms import AddTodoForm
 
+def add_todo(request):
+    if request.method == 'POST':
+        form = AddTodoForm(request.POST)
+        if form.is_valid():
+            #agregar la tarea jeje
+            form.save()
+            #agregar mensaje
+            return HttpResponseRedirect('/')
+    else:
+        form = AddTodoForm()
+    return render(request, 'todos/add_todo.html', {'form': form})
 
 class TodoList(ListView):
     model = Todo
-
 
 def complete_task(request):
     """Mark a task as completed."""

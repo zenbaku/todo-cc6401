@@ -20,5 +20,6 @@ from todos import views
 urlpatterns = [
     url(r'^$', views.TodoList.as_view(), name='TodoList'),
     url(r'^complete/$', views.complete_task, name='complete_task'),
+    url(r'^add_todo/$', views.add_todo, name='add_todo'),
     url(r'^admin/', admin.site.urls),
 ]

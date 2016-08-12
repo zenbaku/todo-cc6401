@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
 from django.db import IntegrityError
 from todos.models import Todo
-from todos.forms import AddTodoForm
+from todos.forms import TodoForm
 from django.test import Client
 
 
@@ -62,14 +62,29 @@ class AddTaskTestCase(TransactionTestCase):
         self.form_data = {'description': 'test task', 'is_completed' : True}
 
     def test_form_valid(self):
-        form = AddTodoForm(data=self.form_data)
+        form = TodoForm(data=self.form_data)
         self.assertTrue(form.is_valid())
 
     def test_post_data(self):
-        response = self.c.post('/add_todo/', self.form_data, follow=True) #follow sigue redirects
+        response = self.c.post('/add_task/', self.form_data, follow=True) #follow sigue redirects
         self.assertTrue(response.status_code == 200)
         index = self.c.get('/')
         self.assertIn(self.form_data['description'], index.content)
+
+
+class EditTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        self.form_data = {'description': 'test task', 'is_completed' : True}
+        self.edited_form_data = {'description':'edited test task', 'is_completed' : False}
+        self.c.post('/add_task/', self.form_data, follow=True) #agrega usando add_task
+
+    def test_edit_post_data(self):
+        first = Todo.objects.first()
+        response = self.c.post('/edit_task/'+str(first.pk)+'/', self.edited_form_data, follow=True) #follow sigue redirects
+        self.assertTrue(response.status_code == 200)
+        index = self.c.get('/')
+        self.assertIn(self.edited_form_data['description'], index.content)
 
 
 class OrderTaskTestCase(TransactionTestCase):

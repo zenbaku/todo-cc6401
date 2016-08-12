@@ -6,7 +6,7 @@
     {% endfor %}
 </ul>
 {% endif %}
-<a href="/add_todo/">Add Task</a>
+<a href="{% url 'add_task'  %}">Add Task</a>
 <ul id="items">
     {% for todo in object_list %}
         <li data-todo-id="{{ todo.id }}">
@@ -20,6 +20,7 @@
                     <button>completar</button>
                 </form>
             {% endif %}
+            <a href ="{% url 'edit_task' todo.pk %}"><button>Editar</button></a>
         </li>
     {% endfor %}
 </ul>

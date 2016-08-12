@@ -1,7 +1,15 @@
 <h1>Tareas</h1>
-<ul>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<a href="{% url 'add_task'  %}">Add Task</a>
+<ul id="items">
     {% for todo in object_list %}
-        <li>
+        <li data-todo-id="{{ todo.id }}">
             {{ todo.description }}
             {% if todo.is_completed %}
                 &#10003;
@@ -12,6 +20,36 @@
                     <button>completar</button>
                 </form>
             {% endif %}
+            <a href ="{% url 'edit_task' todo.pk %}"><button>Editar</button></a>
         </li>
     {% endfor %}
 </ul>
+
+<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.4.2/Sortable.min.js"></script>
+<script type="text/javascript">
+    var el = document.getElementById('items');
+    var sortable = Sortable.create(el, {
+        onUpdate: function (e) {
+            var todo = e.item;
+            var todo_id = todo.dataset.todoId;
+            var new_index = e.newIndex;
+
+            // Send request
+            $.ajax({
+                method: "POST",
+                url: "{% url 'reorder_task' %}",
+                data: {
+                    id: todo_id,
+                    new_index: new_index,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function () {
+                    console.log("DONE");
+                }
+            });
+        },
+    });
+
+
+</script>

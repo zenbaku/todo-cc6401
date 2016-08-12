@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-
+from django.contrib import messages
 from .models import Todo
 from .forms import AddTodoForm
 
@@ -13,7 +13,10 @@ def add_todo(request):
             #agregar la tarea jeje
             form.save()
             #agregar mensaje
+            messages.success(request, 'Task added successfully.')
             return HttpResponseRedirect('/')
+        else:
+            messages.error(request, 'Invalid Form, try again.')
     else:
         form = AddTodoForm()
     return render(request, 'todos/add_todo.html', {'form': form})

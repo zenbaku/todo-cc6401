@@ -55,6 +55,31 @@ class CompleteTaskTestCase(TransactionTestCase):
         todo = Todo.objects.get(pk=todo_id)
         self.assertTrue(todo.is_completed)
         self.assertNotIn('completar', response.content)
+        
+class DeleteTaskTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        self.todo = Todo.objects.create(
+            description='Hello',
+            is_completed=False
+        )
+
+    def test_delete_button_present(self):
+        response = self.c.get('/')
+        self.assertIn('eliminar', response.content)
+
+    def test_delete_task(self):
+        todo_id = self.todo.id
+
+        response = self.c.post('/delete/', {
+            'id': todo_id
+        })
+        
+        try:
+            todo = Todo.objects.get(pk=todo_id)
+        except:
+            todo = None
+        self.assertIsNone(todo)
 
 class AddTaskTestCase(TransactionTestCase):
     def setUp(self):

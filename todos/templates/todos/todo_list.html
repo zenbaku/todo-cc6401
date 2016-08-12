@@ -20,6 +20,11 @@
                     <button>completar</button>
                 </form>
             {% endif %}
+            <form action="{% url 'delete_task' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ todo.id }}">
+                <button>eliminar</button>
+            </form>
             <a href ="{% url 'edit_task' todo.pk %}"><button>Editar</button></a>
         </li>
     {% endfor %}

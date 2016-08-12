@@ -202,19 +202,25 @@ class TestOrderTaskViewTestCase(TransactionTestCase):
         )
 
 
-class FilterCompletedTaskTestCase(TransactionTestCase):
+class FavoriteTaskTestCase(TransactionTestCase):
     def setUp(self):
         self.c = Client()
-        Todo.objects.create(
-            description='biggest todo',
-            is_completed=False
-        )
-        Todo.objects.create(
-            description='largest todo',
-            is_completed=True
+        self.todo = Todo.objects.create(
+            description='Hello',
+            is_favorite=False
         )
 
-    def test(self):
-        response = self.c.get('/uncompleted/')
-        self.assertIn('biggest todo', response.content)
-        self.assertNotIn('largest todo', response.content)
+    def test_favorite_button_present(self):
+        response = self.c.get('/')
+        self.assertIn('favoritear', response.content)
+
+    def test_favorite_task(self):
+        todo_id = self.todo.id
+
+        response = self.c.post('/favorite/', {
+            'id': todo_id
+        })
+
+        todo = Todo.objects.get(pk=todo_id)
+        self.assertTrue(todo.is_favorite)
+        self.assertNotIn('favoritear', response.content)

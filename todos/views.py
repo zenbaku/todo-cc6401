@@ -78,6 +78,16 @@ def complete_task(request):
 
     return redirect('TodoList')
 
+def delete_task(request):
+    """Deletes a task."""
+    todo_id = request.POST.get('id')
+    if todo_id:
+        todo = Todo.objects.get(pk=todo_id)
+        todo.delete()
+        messages.success(request,'Task Deleted Successfully!')
+
+    return redirect('TodoList')
+
 
 def reorder_task(request):
     """Mark a task as completed."""

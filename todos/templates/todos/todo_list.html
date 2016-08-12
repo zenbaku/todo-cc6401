@@ -9,7 +9,11 @@
 <a href="{% url 'add_task'  %}">Add Task</a>
 <ul id="items">
     {% for todo in object_list %}
-        <li data-todo-id="{{ todo.id }}">
+        {% if todo.is_completed %}
+            <li data-todo-id="{{ todo.id }}" class="completed">
+        {% else %}
+            <li data-todo-id="{{ todo.id }}" class="uncompleted">
+        {% endif %}
             {{ todo.description }}
             {% if todo.is_completed %}
                 &#10003;
@@ -20,36 +24,89 @@
                     <button>completar</button>
                 </form>
             {% endif %}
+            <form action="{% url 'delete_task' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ todo.id }}">
+                <button>eliminar</button>
+            </form>
             <a href ="{% url 'edit_task' todo.pk %}"><button>Editar</button></a>
         </li>
     {% endfor %}
 </ul>
 
+<div class="filters">
+    <a href="#all" data-filter="all">Todas</a> |
+    <a href="#uncompleted" data-filter="uncompleted">Pendientes</a> |
+    <a href="#completed" data-filter="completed">Completadas</a>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/Sortable/1.4.2/Sortable.min.js"></script>
 <script type="text/javascript">
-    var el = document.getElementById('items');
-    var sortable = Sortable.create(el, {
-        onUpdate: function (e) {
-            var todo = e.item;
-            var todo_id = todo.dataset.todoId;
-            var new_index = e.newIndex;
+    function filterTodos (f) {
+        var $el = $('.filters').find('a[data-filter="' + f + '"]');
 
-            // Send request
-            $.ajax({
-                method: "POST",
-                url: "{% url 'reorder_task' %}",
-                data: {
-                    id: todo_id,
-                    new_index: new_index,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                },
-                success: function () {
-                    console.log("DONE");
-                }
-            });
-        },
+        // Style links
+        $('.filters a').css('font-weight', 'normal');
+        $el.css('font-weight', 'bold');
+
+        // Hide all task
+        $('#items li').hide();
+
+        if (f == 'all') {
+            $('#items li').show();
+        }
+
+        if (f == 'uncompleted') {
+            $('#items li.uncompleted').show();
+        }
+
+        if (f == 'completed') {
+            $('#items li.completed').show();
+        }
+    }
+
+    $(document).ready(function () {
+        // Reorder todos
+        var el = document.getElementById('items');
+        var sortable = Sortable.create(el, {
+            onUpdate: function (e) {
+                var todo = e.item;
+                var todo_id = todo.dataset.todoId;
+                var new_index = e.newIndex;
+
+                // Send request
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'reorder_task' %}",
+                    data: {
+                        id: todo_id,
+                        new_index: new_index,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function () {
+                        console.log("DONE");
+                    }
+                });
+            },
+        });
+
+        // Filter todos
+        $('.filters a').on('click', function (e) {
+            var $el = $(this);
+            var filter = $el.data('filter');
+
+            filterTodos(filter);
+        });
+
+        // Initial state
+        var hash = window.location.hash.replace('#', '');
+        window.hash = hash;
+        console.log("hash", hash);
+        if ($.inArray(hash, ['all', 'uncompleted', 'completed']) !== -1) {
+            filterTodos(hash);
+        } else {
+            filterTodos('all');
+        }
     });
-
-
 </script>

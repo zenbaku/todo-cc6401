@@ -55,6 +55,31 @@ class CompleteTaskTestCase(TransactionTestCase):
         todo = Todo.objects.get(pk=todo_id)
         self.assertTrue(todo.is_completed)
         self.assertNotIn('completar', response.content)
+        
+class DeleteTaskTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        self.todo = Todo.objects.create(
+            description='Hello',
+            is_completed=False
+        )
+
+    def test_delete_button_present(self):
+        response = self.c.get('/')
+        self.assertIn('eliminar', response.content)
+
+    def test_delete_task(self):
+        todo_id = self.todo.id
+
+        response = self.c.post('/delete/', {
+            'id': todo_id
+        })
+        
+        try:
+            todo = Todo.objects.get(pk=todo_id)
+        except:
+            todo = None
+        self.assertIsNone(todo)
 
 class AddTaskTestCase(TransactionTestCase):
     def setUp(self):
@@ -175,3 +200,21 @@ class TestOrderTaskViewTestCase(TransactionTestCase):
             Todo.objects.values_list('pk', 'order'),
             [(second.pk, 0), (third.pk, 1), (first.pk, 2)]
         )
+
+
+class FilterCompletedTaskTestCase(TransactionTestCase):
+    def setUp(self):
+        self.c = Client()
+        Todo.objects.create(
+            description='biggest todo',
+            is_completed=False
+        )
+        Todo.objects.create(
+            description='largest todo',
+            is_completed=True
+        )
+
+    def test(self):
+        response = self.c.get('/uncompleted/')
+        self.assertIn('biggest todo', response.content)
+        self.assertNotIn('largest todo', response.content)

@@ -55,8 +55,18 @@ class EditTaskView(DetailView):
         else:
             messages.error(request, 'Invalid Form, try again.')
 
+
 class TodoList(ListView):
     model = Todo
+
+
+class UncompletedTodoList(ListView):
+    template_name = 'todo_list.html'
+    context_object_name = 'todo_list'
+
+    def get_queryset(self):
+        return Todo.objects.filter(is_completed=False)
+
 
 def complete_task(request):
     """Mark a task as completed."""
@@ -65,6 +75,16 @@ def complete_task(request):
         todo = Todo.objects.get(pk=todo_id)
         todo.is_completed = True
         todo.save()
+
+    return redirect('TodoList')
+
+def delete_task(request):
+    """Deletes a task."""
+    todo_id = request.POST.get('id')
+    if todo_id:
+        todo = Todo.objects.get(pk=todo_id)
+        todo.delete()
+        messages.success(request,'Task Deleted Successfully!')
 
     return redirect('TodoList')
 

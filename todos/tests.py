@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
 from django.db import IntegrityError
 from todos.models import Todo
-from todos.forms import AddTodoForm
+from todos.forms import TodoForm
 from django.test import Client
 
 
@@ -62,7 +62,7 @@ class AddTaskTestCase(TransactionTestCase):
         self.form_data = {'description': 'test task', 'is_completed' : True}
 
     def test_form_valid(self):
-        form = AddTodoForm(data=self.form_data)
+        form = TodoForm(data=self.form_data)
         self.assertTrue(form.is_valid())
 
     def test_post_data(self):

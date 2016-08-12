@@ -3,12 +3,21 @@ from django.views.generic import ListView
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.views.generic import TemplateView, DetailView
 from .models import Todo
-from .forms import AddTodoForm
+from .forms import TodoForm
 
-def add_todo(request):
-    if request.method == 'POST':
-        form = AddTodoForm(request.POST)
+class AddTaskView(TemplateView):
+    template_name = 'todos/add_task.html'
+    form = None
+
+    def get_context_data(self, **kwargs):
+        context = super(AddTaskView, self).get_context_data(**kwargs)
+        context['form'] = TodoForm()
+        return context
+        
+    def post(self, request, *args, **kwargs):
+        form = TodoForm(request.POST)
         if form.is_valid():
             #agregar la tarea jeje
             form.save()
@@ -17,10 +26,35 @@ def add_todo(request):
             return HttpResponseRedirect('/')
         else:
             messages.error(request, 'Invalid Form, try again.')
-    else:
-        form = AddTodoForm()
-    return render(request, 'todos/add_todo.html', {'form': form})
+            
+class EditTaskView(DetailView):
+    model = Todo
+    template_name = 'todos/edit_task.html'
+    form = None
 
+    def get_context_data(self, **kwargs):
+        context = super(EditTaskView, self).get_context_data(**kwargs)
+        context = self.update_context(context, TodoForm)
+        return context
+        
+    def post(self, request, *args, **kwargs):
+        return self.update_post(request, TodoForm)
+
+    def update_context(self, context, form):
+        context['form'] = form(instance=self.object)
+        return context
+
+    def update_post(self, request, form):
+        form = form(request.POST, instance=self.get_object())
+        if form.is_valid():
+            #agregar la tarea jeje
+            form.save()
+            #agregar mensaje
+            messages.success(request, 'Task updated successfully.')
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, 'Invalid Form, try again.')
+            
 class TodoList(ListView):
     model = Todo
 

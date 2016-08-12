@@ -18,3 +18,6 @@ Para correr la aplicación se necesita Python 2.7, virtualenv y pip.
 2. `source venv/bin/activate`
 3. `pip install -r requirements.txt`
 4. `python manage.py test`
+5. `python manage.py makemigrations`
+6. `python manage.py migrate`
+7. `python manage.py runserver` // o Run Project en C9

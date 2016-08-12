@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from .models import Todo
 from .forms import AddTodoForm
@@ -33,3 +33,14 @@ def complete_task(request):
         todo.save()
 
     return redirect('TodoList')
+
+
+def reorder_task(request):
+    """Mark a task as completed."""
+    todo_id = request.POST.get('id')
+    new_index = request.POST.get('new_index')
+
+    todo = Todo.objects.get(pk=todo_id)
+    todo.to(new_index)
+
+    return HttpResponse(status=200)
